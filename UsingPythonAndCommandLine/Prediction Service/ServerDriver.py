@@ -5,7 +5,7 @@ import json
 
 
 sp = SentencePredictor.SentencePredictor()
-print(sp.predictPhrase("hello"))
+
 class S(BaseHTTPRequestHandler):
     def _set_response(self):
         self.send_response(200)
@@ -17,12 +17,27 @@ class S(BaseHTTPRequestHandler):
         self._set_response()
         self.wfile.write("GET request for {}".format(self.path).encode('utf-8'))
 
+    def do_OPTIONS(self):
+        self.send_response(200, "ok")
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header("Access-Control-Allow-Headers", "X-Requested-With")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
+    def end_headers (self):
+        self.send_header('Access-Control-Allow-Origin', '*')
+        BaseHTTPRequestHandler.end_headers(self)
+
     def do_POST(self):
         content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
         post_data = self.rfile.read(content_length) # <--- Gets the data itself
-        print(sp.predictPhrase(json.loads(post_data.decode('utf-8'))['UserInput']))
+        #print(sp.predictPhrase(json.loads(post_data.decode('utf-8'))['UserInput']))
+        print(content_length, post_data)
+        print(self.headers.keys())
         self._set_response()
-        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+        prediction = sp.predictPhrase(json.loads(post_data.decode('utf-8'))['UserInput'])
+        self.wfile.write(str.encode(prediction))
 
 def run(server_class=HTTPServer, handler_class=S, port=8080):
     logging.basicConfig(level=logging.INFO)
