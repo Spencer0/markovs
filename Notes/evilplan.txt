@@ -1,5 +1,5 @@
 
-Focus: Efficeiency 
+Focus: Efficiency 
 Lang: Go (Beginner) 
 Start Date: 12/18/2019
 
