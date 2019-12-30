@@ -1,0 +1,25 @@
+
+Focus: Efficeiency 
+Lang: Go (Beginner) 
+Start Date: 12/18/2019
+
+
+Input: Script / Speech files delimted by paragraphs and periods.
+
+
+
+
+
+Output: Textbox that allows me to start a phrase and have it 
+finished with likely words from the test data.
+
+
+Prototype: Console Version.
+Final Product: JS Native megafast website (brag about speed)
+
+Hard Mode Ideas: 
+Learn trees. Store the chain as a BST and inorder traverse it to print the final message. 
+
+
+Day 1: Got a really rough prototype in python. Go seems more complicated than i initally thought. 
+Doing stats in go sucks so far. I'll need to build structs? to represent different aspects of a markov chain
