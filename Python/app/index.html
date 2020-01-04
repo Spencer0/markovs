@@ -1,0 +1,68 @@
+<link rel="stylesheet" type="text/css" href="markov.css">
+<script>
+  const url = "http://localhost:8080";
+  function createCORSRequest(method, url) {
+    var xhr = new XMLHttpRequest();
+    
+    if ("withCredentials" in xhr) {
+        
+        // Check if the XMLHttpRequest object has a "withCredentials" property.
+        // "withCredentials" only exists on XMLHTTPRequest2 objects.
+        xhr.open(method, url, true);
+    } else if (typeof XDomainRequest != "undefined") {
+        
+        // Otherwise, check if XDomainRequest.
+        // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+        xhr = new XDomainRequest();
+        xhr.open(method, url);
+    } else {
+        
+        // Otherwise, CORS is not supported by the browser.
+        xhr = null;
+    }
+    return xhr;
+  }
+  function initalizeButton(){
+    let body = document.getElementById("body");
+    body.addEventListener("keydown", () => {
+      console.log("keydown", event);
+      if (event.keyCode == 9) {
+        event.preventDefault();
+        console.log("Submit");
+        send();
+      }
+    });
+  }
+  function send(){
+    var xhr = createCORSRequest('POST', url);
+
+    xhr.onreadystatechange = function() { // Call a function when the state changes.
+      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+        console.log("server responded: ", xhr.response)
+        let inputBox = document.getElementById("input-text")
+        if(inputBox.value){
+          if(inputBox.value[-1] != " "){
+           inputBox.value += " "
+          }
+        }
+        inputBox.value += xhr.response;
+      }
+  }
+    let userInput = document.getElementById("input-text").value.trim()
+    let userWordArray = userInput.split(" ")
+    let wordCount = userWordArray.length 
+    console.log( userInput, userWordArray, wordCount )
+    let package = {
+      UserInput: userWordArray[wordCount - 1]
+    }
+    xhr.send(JSON.stringify(package));
+  }
+
+</script>
+<body id="body" onload="initalizeButton()">
+<button style="display:none;" onclick="send()">the</button>
+<textarea placeholder="Type the start of your sentence here and press tab, or generate a full sentance." id="input-text" rows=8 cols="70">
+</textarea></br>
+
+
+</body>

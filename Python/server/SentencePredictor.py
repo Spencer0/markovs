@@ -16,13 +16,13 @@ class SentencePredictor:
         self.computePhraseProbability()
 
     # Probably done wrong - Need a 1d array to match input size
-    # Probabilities must sum to 1.0
+    # Probabilities in a p-dist array must sum to 1.0
     def generate_probability_distribution(self, size):
         p = []
-        bestChance = 0.5
+        highestChance = 0.5
         for i in range(size - 1):
-            p.append(bestChance)
-            bestChance = bestChance / 2
+            p.append(highestChance)
+            highestChance = highestChance / 2
         p.append(1 - sum(p))
         return p
 
@@ -37,7 +37,7 @@ class SentencePredictor:
                 wordsUntilPeriod.append(self.corpus[i + step])
                 step += 1
             wordsUntilPeriod.append(self.corpus[i + step])
-            wordsUntilPeriod = ' '.join(wordsUntilPeriod)
+            wordsUntilPeriod = ' '.join(wordsUntilPeriod[1:])
             yield (self.corpus[i], wordsUntilPeriod)
 
     def computePhraseProbability(self):
@@ -55,20 +55,30 @@ class SentencePredictor:
 
 
     def predictPhrase(self, word = None):
+        isLastWordOfSentence = False
+        
         if(word):
+            if(word[-1] == '.'):
+                print("Stripping", word , "into" , word[:-1])
+                isLastWordOfSentence = True
+                word = word[:-1]
             first_word = word
             chain = [first_word]
             if first_word not in self.word_dict.keys():
                 first_word = np.random.choice(self.corpus)
+                chain = [first_word]
 
         else:
             first_word = np.random.choice(self.corpus)
             chain = [first_word]
 
         sentence_end = np.random.choice(self.word_dict[chain[-1]], p = self.p_dict[chain[-1]])
-
+       
         # String together with spaces
         finalChain = ''.join(sentence_end)
+        if( isLastWordOfSentence ):
+            finalChain = ' ' + finalChain
+        print(chain, word, first_word, finalChain)
         return finalChain
 
 def beginConsoleApp():
