@@ -29,39 +29,38 @@
       if (event.keyCode == 9) {
         event.preventDefault();
         console.log("Submit");
-        send();
+        //send();
+        get();
       }
     });
   }
-  function send(){
-    var xhr = createCORSRequest('POST', url);
-
-    xhr.onreadystatechange = function() { // Call a function when the state changes.
-      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-        console.log("server responded: ", xhr.response)
-        let inputBox = document.getElementById("input-text")
-        if(inputBox.value){
-          if(inputBox.value[-1] != " "){
-           inputBox.value += " "
-          }
-        }
-        inputBox.value += xhr.response;
-      }
-  }
+  
+  function get(){
     let userInput = document.getElementById("input-text").value.trim()
     let userWordArray = userInput.split(" ")
     let wordCount = userWordArray.length 
+    var xhr = createCORSRequest('GET', url + "/" + userWordArray[wordCount - 1]);
     console.log( userInput, userWordArray, wordCount )
-    let package = {
-      UserInput: userWordArray[wordCount - 1]
+    xhr.send();
+
+      xhr.onreadystatechange = function() { // Call a function when the state changes.
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+          console.log("server responded: ", xhr.response)
+          let inputBox = document.getElementById("input-text")
+          if(inputBox.value){
+            if(inputBox.value[-1] != " "){
+            inputBox.value += " "
+            }
+          }
+          inputBox.value += xhr.response;
+        }
     }
-    xhr.send(JSON.stringify(package));
   }
 
 </script>
 <body id="body" onload="initalizeButton()">
 <button style="display:none;" onclick="send()">the</button>
-<textarea placeholder="Type the start of your sentence here and press tab, or generate a full sentance." id="input-text" rows=8 cols="70">
+<textarea placeholder="Type the start of your sentence here and press tab, or generate a full sentance." id="input-text" rows=8 cols="60">
 </textarea></br>
 
 

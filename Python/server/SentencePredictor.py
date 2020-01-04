@@ -59,7 +59,6 @@ class SentencePredictor:
         
         if(word):
             if(word[-1] == '.'):
-                print("Stripping", word , "into" , word[:-1])
                 isLastWordOfSentence = True
                 word = word[:-1]
             first_word = word
@@ -78,7 +77,6 @@ class SentencePredictor:
         finalChain = ''.join(sentence_end)
         if( isLastWordOfSentence ):
             finalChain = ' ' + finalChain
-        print(chain, word, first_word, finalChain)
         return finalChain
 
 def beginConsoleApp():

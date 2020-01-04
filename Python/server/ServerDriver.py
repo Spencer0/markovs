@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import logging
+import datetime
 import SentencePredictor
 import json
 
@@ -7,17 +8,17 @@ import json
 sp = SentencePredictor.SentencePredictor()
 
 class S(BaseHTTPRequestHandler):
-    def _set_response(self):
+    def set_response(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
+
     def do_GET(self):
-        content_length = int(self.headers['Content-Length']) 
-        post_data = self.rfile.read(content_length) 
-        print(content_length, post_data)
-        self._set_response()
-        prediction = sp.predictPhrase(json.loads(post_data.decode('utf-8'))['UserInput'])
+        self.set_response()
+        time = str(datetime.datetime.now())
+        prediction = sp.predictPhrase(self.path[1:])
+        logging.debug(prediction)
         self.wfile.write(str.encode(prediction))
 
     def do_OPTIONS(self):
@@ -31,15 +32,6 @@ class S(BaseHTTPRequestHandler):
     def end_headers (self):
         self.send_header('Access-Control-Allow-Origin', '*')
         BaseHTTPRequestHandler.end_headers(self)
-
-    def do_POST(self):
-        content_length = int(self.headers['Content-Length']) 
-        post_data = self.rfile.read(content_length) 
-        print(content_length, post_data)
-        self._set_response()
-        prediction = sp.predictPhrase(json.loads(post_data.decode('utf-8'))['UserInput'])
-        self.wfile.write(str.encode(prediction))
-        #self.wfile.write(str.encode("Speed pass"))
 
 def run(server_class=HTTPServer, handler_class=S, port=8080):
     logging.basicConfig(level=logging.INFO)
